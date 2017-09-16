@@ -5,9 +5,9 @@
 
       <div class="container__nav">
         <span @click="goHome" class="brand">Home</span>
-        <span v-bind:click="goLivro">Livro</span>
+        <span v-on:click="goLivro">Livro</span>
         <span>Livro Detalhe</span>
-        <span @click="goCapitulo">Capitulo</span>
+        <span>Capitulo</span>
         <span>Versículo</span>
       </div>
 
@@ -18,7 +18,67 @@
         </div>
 
         <div v-show="isLivro()" class="container__main__livro">
-          <h1>Livro</h1>
+
+
+          <div class="field">
+            <span class="field__label">ID:</span>
+            <input ref="livroId" class="field__input" type="text" v-model="livro.id">
+          </div>
+
+          <div class="field">
+            <span class="field__label">Nome:</span>
+            <input class="field__input" type="text" v-model="livro.nome">
+          </div>
+
+          <div class="field">
+            <span class="field__label">Ordem:</span>
+            <input class="field__input" type="text" v-model="livro.ordem">
+          </div>
+
+          <div class="field">
+            <span class="field__label">Sigla:</span>
+            <input class="field__input" type="text" v-model="livro.sigla">
+          </div>
+
+          <div class="field">
+            <span class="field__label">Testamento:</span>
+            <input class="field__input" type="text" v-model="livro.testamento">
+          </div>
+
+          <div class="buttons">
+            <button type="button" @click="limpar">Limpar</button>
+            <button type="button" @click="salvar">Salvar</button>
+          </div>
+
+          <table border="1">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>ID:</th>
+                <th>NOME:</th>
+                <th>ORDEM:</th>
+                <th>SIGLA:</th>
+                <th>TESTAMENTO:</th>
+                <th>AÇÕES:</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(l, index) in this.livros">
+                <td>{{ index+1 }}</td>
+                <td>{{ l.id }}</td>
+                <td>{{ l.nome }}</td>
+                <td>{{ l.ordem }}</td>
+                <td>{{ l.sigla }}</td>
+                <td>{{ l.testamento }}</td>
+                <td>
+                  <button type="button" @click="removeItem(l.id)">
+                    Remover
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
         </div>
 
       </div>
@@ -35,14 +95,44 @@
 <script>
   export default {
     data: () => ({
-      page: ''
+      page: '',
+      livro: {
+        id: null,
+        nome: null,
+        ordem: null,
+        sigla: null,
+        testamento: null
+      },
+      livros: []
     }),
     methods: {
+      removeItem(id) {
+        this.livros = this.livros.filter(i => Number(i.id) !== Number(id))
+      },
+      limpar() {
+        this.livro = new Object()
+
+        this.livro.id = null
+        this.livro.nome = null
+        this.livro.ordem = null
+        this.livro.sigla = null
+        this.livro.testamento = null
+
+
+        this.$refs.livroId.focus()
+      },
       isHome() {
         return this.page === 'home'
       },
       isLivro() {
         return this.page === 'livro'
+      },
+      addOnList(livro) {
+        this.livros.push(Object.assign(livro))
+      },
+      salvar() {
+        this.addOnList(this.livro)
+        this.limpar()
       },
       goHome() {
         this.page = 'home'
@@ -50,52 +140,13 @@
       goLivro() {
         this.page = 'livro'
       }
+    },
+    mounted() {
+      this.goLivro()
     }
   }
 </script>
 
 <style lang="scss" scoped>
-  .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    min-width: 100%;
-
-    &__nav {
-      border: 1px solid black;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: center;
-      font-size: 1.3em;
-      span {
-        &.brand {
-          font-size: 1.5em;
-        }
-        cursor: pointer;
-        &:hover {
-          font-weight: bold;
-          background: darken(white, 10%);
-        }
-      }
-      flex-grow: 10;
-    }
-
-    &__main {
-      border: 1px solid black;
-      flex-grow: 80;
-    }
-
-    &__footer {
-      border: 1px solid black;
-      flex-grow: 10;
-    }
-
-  }
-
-
+  @import './app';
 </style>
