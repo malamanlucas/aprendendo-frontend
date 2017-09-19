@@ -17,38 +17,9 @@
           <h1>home</h1>
         </div>
 
-        <div v-show="isLivro()" class="container__main__livro">
+        <div v-show="isLivro()">
 
-
-          <div class="field">
-            <span class="field__label">ID:</span>
-            <input ref="livroId" class="field__input" type="text" v-model="livro.id">
-          </div>
-
-          <div class="field">
-            <span class="field__label">Nome:</span>
-            <input class="field__input" type="text" v-model="livro.nome">
-          </div>
-
-          <div class="field">
-            <span class="field__label">Ordem:</span>
-            <input class="field__input" type="text" v-model="livro.ordem">
-          </div>
-
-          <div class="field">
-            <span class="field__label">Sigla:</span>
-            <input class="field__input" type="text" v-model="livro.sigla">
-          </div>
-
-          <div class="field">
-            <span class="field__label">Testamento:</span>
-            <input class="field__input" type="text" v-model="livro.testamento">
-          </div>
-
-          <div class="buttons">
-            <button type="button" @click="limpar">Limpar</button>
-            <button type="button" @click="salvar">Salvar</button>
-          </div>
+          <formulario @click.native="alerta" />
 
           <table border="1">
             <thead>
@@ -71,7 +42,10 @@
                 <td>{{ l.sigla }}</td>
                 <td>{{ l.testamento }}</td>
                 <td>
-                  <button type="button" @click="removeItem(l.id)">
+                  <button type="button" @click="comecarEdicao(l)">
+                    Editar
+                  </button>
+                  <button type="button" @click="removeLivro(l.id)">
                     Remover
                   </button>
                 </td>
@@ -93,46 +67,43 @@
 </template>
 
 <script>
+  import Formulario from './components/Livro/Formulario'
+
   export default {
+    components: {
+      Formulario
+    },
     data: () => ({
       page: '',
-      livro: {
-        id: null,
-        nome: null,
-        ordem: null,
-        sigla: null,
-        testamento: null
-      },
       livros: []
     }),
     methods: {
-      removeItem(id) {
+      alerta() {
+        window.alert('qweq')
+      },
+      removeLivro(id) {
         this.livros = this.livros.filter(i => Number(i.id) !== Number(id))
       },
-      limpar() {
+      comecarEdicao(livro) {
+        this.isEdit = true
         this.livro = new Object()
-
-        this.livro.id = null
-        this.livro.nome = null
-        this.livro.ordem = null
-        this.livro.sigla = null
-        this.livro.testamento = null
-
-
-        this.$refs.livroId.focus()
+        this.genericEdit(this.livro, livro)
+      },
+      genericEdit(destino, origem) {
+        destino.id = origem.id
+        destino.nome = origem.nome
+        destino.ordem = origem.ordem
+        destino.sigla = origem.sigla
+        destino.testamento = origem.testamento
+      },
+      addOnList(livro) {
+        this.livros.push(livro)
       },
       isHome() {
         return this.page === 'home'
       },
       isLivro() {
         return this.page === 'livro'
-      },
-      addOnList(livro) {
-        this.livros.push(Object.assign(livro))
-      },
-      salvar() {
-        this.addOnList(this.livro)
-        this.limpar()
       },
       goHome() {
         this.page = 'home'
